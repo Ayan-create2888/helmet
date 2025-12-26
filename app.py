@@ -10,7 +10,7 @@ model = YOLO("best_helmet.pt")
 
 st.set_page_config(page_title="Helmet Detection", layout="centered")
 
-st.title(" Helmet Detection App")
+st.title(" 🪖 Helmet Detection App")
 st.write("Upload an image or video to detect helmet on heads.")
 
 # File uploader
@@ -113,3 +113,4 @@ if uploaded_file is not None:
                 file_name="helmet_detected.mp4",
                 mime="video/mp4"
             )
+
