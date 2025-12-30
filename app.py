@@ -9,8 +9,8 @@ st.title("🪖 Helmet Detection")
 # Load the helmet detection model
 @st.cache_resource
 def load_model():
-    # Replace with your helmet detection model path
-    return YOLO("best_helmet.pt")
+    model_path = os.path.join(os.path.dirname(__file__), "best_helmet.pt")
+    return YOLO(model_path)
 
 model = load_model()
 
