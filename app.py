@@ -55,4 +55,10 @@ if uploaded_file:
 
         st.video(output_video)
 
-        with open(ou
+        with open(output_video, "rb") as f:
+            st.download_button(
+                label="⬇ Download Result Video",
+                data=f,
+                file_name="helmet_detection.mp4",
+                mime="video/mp4"
+            )
