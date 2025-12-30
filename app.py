@@ -6,12 +6,15 @@ import os
 
 st.title("🪖 Helmet Detection")
 
+# Load the helmet detection model
 @st.cache_resource
 def load_model():
-    return YOLO("models/best_helmet.pt")
+    # Replace with your helmet detection model path
+    return YOLO("best_helmet.pt")
 
 model = load_model()
 
+# File uploader
 uploaded_file = st.file_uploader(
     "Upload Image or Video",
     type=["jpg", "jpeg", "png", "mp4", "mov", "avi"]
@@ -24,36 +27,25 @@ if uploaded_file:
     temp_file.close()
 
     if suffix.lower() in [".jpg", ".jpeg", ".png"]:
-        image = Image.open(temp_file.name)
-        st.image(image, caption="Original Image", use_column_width=True)
+        st.image(Image.open(temp_file.name), caption="Original Image")
 
+        # Run helmet detection
         results = model.predict(temp_file.name, save=True)
         output_path = results[0].save_dir + "/" + os.path.basename(temp_file.name)
 
-        st.image(output_path, caption="Detected Image", use_column_width=True)
+        st.image(output_path, caption="Helmet Detection Result")
 
         with open(output_path, "rb") as f:
-            st.download_button(
-                "⬇ Download Result",
-                f,
-                file_name="helmet_detection.jpg"
-            )
+            st.download_button("⬇ Download Result", f, "helmet_detection.jpg")
 
     else:
         st.video(temp_file.name)
 
-        results = model.predict(
-            source=temp_file.name,
-            save=True
-        )
-
+        # Run helmet detection on video
+        results = model.predict(temp_file.name, save=True)
         output_video = results[0].save_dir + "/" + os.path.basename(temp_file.name)
 
         st.video(output_video)
 
         with open(output_video, "rb") as f:
-            st.download_button(
-                "⬇ Download Result Video",
-                f,
-                file_name="helmet_detection.mp4"
-            )
+            st.download_button("⬇ Download Result Video", f, "helmet_detection.mp4")
