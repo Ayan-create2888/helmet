@@ -30,15 +30,15 @@ if uploaded_file:
     if suffix in [".jpg", ".jpeg", ".png"]:
         st.image(Image.open(temp_file.name), caption="Original Image", use_column_width=True)
 
-        results = model.predict(temp_file.name, save=True)
-        # Ultralytics YOLO saves images in results[0].save_dir / filename
-        output_path = os.path.join(results[0].save_dir, os.path.basename(temp_file.name))
+        results = model.predict(temp_file.name, save=False)  # no need to save on disk
+        annotated_img = results[0].plot()  # returns NumPy array
+        img_pil = Image.fromarray(annotated_img)
 
-        # Read the image into memory
-        with open(output_path, "rb") as f:
-            img_bytes = f.read()
+        img_bytes = BytesIO()
+        img_pil.save(img_bytes, format="JPEG")
+        img_bytes.seek(0)
 
-        st.image(BytesIO(img_bytes), caption="Helmet Detection Result", use_column_width=True)
+        st.image(img_bytes, caption="Helmet Detection Result", use_column_width=True)
         st.download_button(
             label="⬇ Download Result",
             data=img_bytes,
@@ -50,10 +50,11 @@ if uploaded_file:
     else:
         st.video(temp_file.name)
 
-        results = model.predict(temp_file.name, save=True)
-        output_video = os.path.join(results[0].save_dir, os.path.basename(temp_file.name))
+        results = model.predict(temp_file.name, save=True)  # videos must be saved
+        # Safest: get actual saved video path from results
+        output_video_path = results[0].path  # path is guaranteed to exist
 
-        with open(output_video, "rb") as f:
+        with open(output_video_path, "rb") as f:
             video_bytes = f.read()
 
         st.video(BytesIO(video_bytes))
